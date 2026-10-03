@@ -3,6 +3,15 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { ChartColumnBigIcon } from "lucide-react";
 import Link from "next/link";
+import {
+  ClerkProvider,
+  Show,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+} from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
+import UserDropdown from "@/components/ui/UserDropdown";
 
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -17,16 +26,37 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${poppins.variable}  h-full antialiased`}>
-      <body className="min-h-full flex flex-col">
-        <nav className="bg-primary p-4 text-white h-20 flex items-center justify-between">
-          <Link href="/" className="font-bold text-2xl flex gap-1 items-center">
-            <ChartColumnBigIcon className="text-lime-500" /> NextCash
-          </Link>
-          <div>auth buttons</div>
-        </nav>
-        {children}
-      </body>
-    </html>
+    <ClerkProvider signInUrl="/sign-in" signUpUrl="/sign-up">
+      <html lang="en" className={`${poppins.variable}  h-full antialiased`}>
+        <body className="min-h-full flex flex-col">
+          <nav className="bg-primary p-4 text-white h-20 flex items-center justify-between">
+            <Link
+              href="/"
+              className="font-bold text-2xl flex gap-1 items-center"
+            >
+              <ChartColumnBigIcon className="text-lime-500" /> NextCash
+            </Link>
+            <header className="flex justify-end items-center p-4 gap-4 h-16">
+              <Show when="signed-out">
+                <SignInButton>
+                  <Button variant="link" className="text-white">
+                    Sign In
+                  </Button>
+                </SignInButton>
+                <SignUpButton>
+                  <Button variant="link" className="text-white">
+                    Sign Up
+                  </Button>
+                </SignUpButton>
+              </Show>
+              <Show when="signed-in">
+                <UserDropdown />
+              </Show>
+            </header>
+          </nav>
+          {children}
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
