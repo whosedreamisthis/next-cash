@@ -29,14 +29,17 @@ const transactionTypes = TRANSACTION_TYPES.map((type) => ({
 interface TransactionFormProps {
   categories: Category[];
   onSubmit: (data: TransactionFormValues) => Promise<void>;
+  // Pre-fills the form, e.g. when editing an existing transaction
+  defaultValues?: TransactionFormValues;
 }
 export default function TransactionForm({
   categories,
   onSubmit,
+  defaultValues,
 }: TransactionFormProps) {
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema),
-    defaultValues: {
+    defaultValues: defaultValues ?? {
       transactionDate: new Date(),
       amount: 0,
       categoryId: 0,

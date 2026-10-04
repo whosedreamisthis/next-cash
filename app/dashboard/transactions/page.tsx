@@ -27,6 +27,8 @@ import { getTransactionsByMonth } from "@/data/getTransactionsByMonth";
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
+  // $2,500 rather than $2,500.00, but still $12.50
+  trailingZeroDisplay: "stripIfInteger",
 });
 
 // Falls back to the current month/year when the param is missing or invalid
