@@ -25,6 +25,7 @@ by Tom Phillips.
 - [Tailwind CSS 4](https://tailwindcss.com) and [shadcn/ui](https://ui.shadcn.com) (Base UI)
 - [Recharts](https://recharts.org) for charts
 - React Hook Form and Zod for forms and validation
+- [Vitest](https://vitest.dev) and React Testing Library for unit tests
 
 ## Getting started
 
@@ -83,6 +84,8 @@ Open [http://localhost:3000](http://localhost:3000).
 | `npm run build`                | Build for production                                |
 | `npm start`                    | Run the production build                            |
 | `npm run lint`                 | Lint with ESLint                                    |
+| `npm test`                     | Run the unit tests once                             |
+| `npm run test:watch`           | Run the unit tests and re-run them on changes       |
 | `npm run db:generate`          | Generate a migration after changing `db/schema.ts`  |
 | `npm run db:migrate`           | Apply migrations to the development database        |
 | `npm run db:migrate:prod`      | Apply migrations to the production database         |
