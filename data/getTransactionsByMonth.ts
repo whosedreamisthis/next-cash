@@ -1,6 +1,8 @@
 import "server-only";
 import { and, desc, eq, gte, lt } from "drizzle-orm";
 import { addMonths, format } from "date-fns";
+import { cacheLife, cacheTag } from "next/cache";
+import { transactionsTag } from "@/lib/cacheTags";
 import { db } from "@/db";
 import { categoriesTable, transactionsTable } from "@/db/schema";
 
@@ -14,6 +16,10 @@ export async function getTransactionsByMonth({
   // 1-12
   month: number;
 }) {
+  "use cache";
+  cacheTag(transactionsTag(userId));
+  cacheLife("hours");
+
   const start = new Date(year, month - 1, 1);
   const end = addMonths(start, 1);
 

@@ -1,6 +1,4 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { auth } from "@clerk/nextjs/server";
 import { format } from "date-fns";
 import MonthYearFilter from "@/components/MonthYearFilter";
 import TransactionsBreadcrumbs from "@/components/TransactionsBreadcrumbs";
@@ -8,15 +6,13 @@ import TransactionsTable from "@/components/TransactionsTable";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getTransactionsByMonth } from "@/data/getTransactionsByMonth";
+import { getUserId } from "@/lib/auth";
 import { parseSearchParam } from "@/lib/parseSearchParam";
 
 export default async function TransactionsPage({
   searchParams,
 }: PageProps<"/dashboard/transactions">) {
-  const { userId } = await auth();
-  if (!userId) {
-    redirect("/sign-in");
-  }
+  const userId = await getUserId();
 
   // Falls back to the current month/year when a param is missing or invalid
   const params = await searchParams;

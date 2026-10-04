@@ -1,11 +1,13 @@
 "use server";
 
 import { and, eq } from "drizzle-orm";
+import { updateTag } from "next/cache";
 import { db } from "@/db";
 import { transactionsTable } from "@/db/schema";
 import { auth } from "@clerk/nextjs/server";
 import { transactionSchema } from "@/lib/schemas/transaction";
 import { categoryExists } from "@/data/categoryExists";
+import { transactionsTag } from "@/lib/cacheTags";
 
 export const updateTransaction = async (data: {
   id: number;
@@ -66,6 +68,9 @@ export const updateTransaction = async (data: {
     };
   }
 
+  // Clears this user's cached transactions so the change shows right away
+  updateTag(transactionsTag(userId));
+
   return {
     id: transaction.id,
   };
@@ -102,6 +107,8 @@ export const deleteTransaction = async (id: number) => {
       message: "Transaction not found",
     };
   }
+
+  updateTag(transactionsTag(userId));
 
   return {
     id: transaction.id,

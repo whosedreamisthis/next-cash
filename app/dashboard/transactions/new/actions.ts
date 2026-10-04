@@ -1,10 +1,12 @@
 "use server";
 
+import { updateTag } from "next/cache";
 import { db } from "@/db";
 import { transactionsTable } from "@/db/schema";
 import { auth } from "@clerk/nextjs/server";
 import { transactionSchema } from "@/lib/schemas/transaction";
 import { categoryExists } from "@/data/categoryExists";
+import { transactionsTag } from "@/lib/cacheTags";
 
 export const createTransaction = async (data: {
   amount: number;
@@ -50,6 +52,9 @@ export const createTransaction = async (data: {
       transactionDate,
     })
     .returning();
+
+  // Clears this user's cached transactions so the change shows right away
+  updateTag(transactionsTag(userId));
 
   return {
     id: transaction.id,

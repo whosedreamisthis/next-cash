@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
+import { Loader2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -27,6 +28,9 @@ export default function MonthYearFilter({
   year: number;
 }) {
   const router = useRouter();
+  // Changing only the search params doesn't show loading.tsx, so the Go
+  // button shows a spinner until the new month has loaded
+  const [isPending, startTransition] = useTransition();
   const [month, setMonth] = useState(initialMonth);
   const [year, setYear] = useState(initialYear);
 
@@ -73,11 +77,15 @@ export default function MonthYearFilter({
         </SelectContent>
       </Select>
       <Button
+        disabled={isPending}
+        aria-label={isPending ? "Loading transactions" : undefined}
         onClick={() =>
-          router.push(`/dashboard/transactions?month=${month}&year=${year}`)
+          startTransition(() =>
+            router.push(`/dashboard/transactions?month=${month}&year=${year}`),
+          )
         }
       >
-        Go
+        {isPending ? <Loader2Icon className="animate-spin" /> : "Go"}
       </Button>
     </div>
   );

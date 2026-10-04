@@ -3,10 +3,10 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { ChartColumnBigIcon } from "lucide-react";
 import Link from "next/link";
-import { ClerkProvider, Show, SignInButton, SignUpButton } from "@clerk/nextjs";
-import { Button } from "@/components/ui/button";
+import { Suspense } from "react";
+import { ClerkProvider } from "@clerk/nextjs";
+import NavAuth from "@/components/NavAuth";
 import { Toaster } from "@/components/ui/sonner";
-import UserDropdown from "@/components/UserDropdown";
 
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -32,21 +32,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <ChartColumnBigIcon className="text-lime-500" /> NextCash
             </Link>
             <header className="flex justify-end items-center gap-1 sm:gap-4">
-              <Show when="signed-out">
-                <SignInButton>
-                  <Button variant="link" className="text-white">
-                    Sign In
-                  </Button>
-                </SignInButton>
-                <SignUpButton>
-                  <Button variant="link" className="text-white">
-                    Sign Up
-                  </Button>
-                </SignUpButton>
-              </Show>
-              <Show when="signed-in">
-                <UserDropdown />
-              </Show>
+              <Suspense
+                fallback={<div className="size-7 rounded-full bg-white/20" />}
+              >
+                <NavAuth />
+              </Suspense>
             </header>
           </nav>
           {children}

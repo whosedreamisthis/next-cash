@@ -1,6 +1,8 @@
 "use client";
 
+import { useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { Loader2Icon } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -13,6 +15,9 @@ const YEARS_SHOWN = 10;
 
 export default function CashflowYearSelect({ year }: { year: number }) {
   const router = useRouter();
+  // Changing only the search params doesn't show loading.tsx, so show a
+  // spinner until the chosen year has loaded
+  const [isPending, startTransition] = useTransition();
 
   const currentYear = new Date().getFullYear();
   // Also reach back far enough to include a year that came from the URL
@@ -23,23 +28,33 @@ export default function CashflowYearSelect({ year }: { year: number }) {
   });
 
   return (
-    <Select
-      items={years}
-      value={year}
-      onValueChange={(value) =>
-        value && router.push(`/dashboard?year=${value}`)
-      }
-    >
-      <SelectTrigger aria-label="Cashflow year">
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent>
-        {years.map((y) => (
-          <SelectItem key={y.value} value={y.value}>
-            {y.label}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <div className="flex items-center gap-2">
+      {isPending && (
+        <Loader2Icon
+          className="size-4 animate-spin text-muted-foreground"
+          aria-label="Loading cashflow"
+        />
+      )}
+      <Select
+        items={years}
+        value={year}
+        disabled={isPending}
+        onValueChange={(value) =>
+          value &&
+          startTransition(() => router.push(`/dashboard?year=${value}`))
+        }
+      >
+        <SelectTrigger aria-label="Cashflow year">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {years.map((y) => (
+            <SelectItem key={y.value} value={y.value}>
+              {y.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
   );
 }

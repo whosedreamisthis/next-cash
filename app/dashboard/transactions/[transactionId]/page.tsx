@@ -1,18 +1,15 @@
-import { notFound, redirect } from "next/navigation";
-import { auth } from "@clerk/nextjs/server";
+import { notFound } from "next/navigation";
 import { parseISO } from "date-fns";
 import EditTransactionBreadcrumbs from "@/components/EditTransactionBreadcrumbs";
 import EditTransactionForm from "@/components/EditTransactionForm";
 import { getCategories } from "@/data/getCategories";
 import { getTransaction } from "@/data/getTransaction";
+import { getUserId } from "@/lib/auth";
 
 export default async function EditTransactionPage({
   params,
 }: PageProps<"/dashboard/transactions/[transactionId]">) {
-  const { userId } = await auth();
-  if (!userId) {
-    redirect("/sign-in");
-  }
+  const userId = await getUserId();
 
   const { transactionId } = await params;
   const id = Number(transactionId);

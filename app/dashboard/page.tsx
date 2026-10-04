@@ -1,18 +1,14 @@
-import { redirect } from "next/navigation";
-import { auth } from "@clerk/nextjs/server";
 import CashflowCard from "@/components/CashflowCard";
 import RecentTransactionsCard from "@/components/RecentTransactionsCard";
 import { getAnnualCashflow } from "@/data/getAnnualCashflow";
 import { getRecentTransactions } from "@/data/getRecentTransactions";
+import { getUserId } from "@/lib/auth";
 import { parseSearchParam } from "@/lib/parseSearchParam";
 
 export default async function DashboardPage({
   searchParams,
 }: PageProps<"/dashboard">) {
-  const { userId } = await auth();
-  if (!userId) {
-    redirect("/sign-in");
-  }
+  const userId = await getUserId();
 
   // Falls back to the current year when the param is missing or invalid
   const currentYear = new Date().getFullYear();

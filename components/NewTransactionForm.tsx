@@ -8,6 +8,7 @@ import { createTransaction } from "@/app/dashboard/transactions/new/actions";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function NewTransactionForm({
   categories,
@@ -15,6 +16,9 @@ export default function NewTransactionForm({
   categories: Category[];
 }) {
   const router = useRouter();
+  // Next.js keeps visited pages mounted (but hidden), so the form would still
+  // hold the last values when coming back. A new key remounts it empty.
+  const [formKey, setFormKey] = useState(0);
 
   const handleSubmit = async (data: TransactionFormValues) => {
     const result = await createTransaction({
@@ -35,6 +39,7 @@ export default function NewTransactionForm({
         richColors: true,
       });
 
+      setFormKey((key) => key + 1);
       router.push(
         `/dashboard/transactions?month=${data.transactionDate.getMonth() + 1}&year=${data.transactionDate.getFullYear()}`,
       );
@@ -46,7 +51,11 @@ export default function NewTransactionForm({
         <CardTitle>New Transaction</CardTitle>
       </CardHeader>
       <CardContent>
-        <TransactionForm categories={categories} onSubmit={handleSubmit} />
+        <TransactionForm
+          key={formKey}
+          categories={categories}
+          onSubmit={handleSubmit}
+        />
       </CardContent>
     </Card>
   );

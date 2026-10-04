@@ -1,5 +1,7 @@
 import "server-only";
 import { and, eq, gte, lt, sql } from "drizzle-orm";
+import { cacheLife, cacheTag } from "next/cache";
+import { transactionsTag } from "@/lib/cacheTags";
 import { db } from "@/db";
 import { categoriesTable, transactionsTable } from "@/db/schema";
 
@@ -18,6 +20,10 @@ export async function getAnnualCashflow({
   userId: string;
   year: number;
 }): Promise<MonthlyCashflow[]> {
+  "use cache";
+  cacheTag(transactionsTag(userId));
+  cacheLife("hours");
+
   const month = sql<number>`extract(month from ${transactionsTable.transactionDate})::int`;
 
   const rows = await db

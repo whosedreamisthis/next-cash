@@ -1,5 +1,7 @@
 import "server-only";
 import { and, eq } from "drizzle-orm";
+import { cacheLife, cacheTag } from "next/cache";
+import { transactionsTag } from "@/lib/cacheTags";
 import { db } from "@/db";
 import { categoriesTable, transactionsTable } from "@/db/schema";
 
@@ -11,6 +13,10 @@ export async function getTransaction({
   id: number;
   userId: string;
 }) {
+  "use cache";
+  cacheTag(transactionsTag(userId));
+  cacheLife("hours");
+
   const [transaction] = await db
     .select({
       id: transactionsTable.id,
