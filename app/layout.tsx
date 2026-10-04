@@ -50,7 +50,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </header>
           </nav>
           {children}
-          <Toaster theme="light" />
+          <Toaster theme="light" closeButton />
         </body>
       </html>
     </ClerkProvider>
