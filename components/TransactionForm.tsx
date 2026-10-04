@@ -26,11 +26,14 @@ const transactionTypes = TRANSACTION_TYPES.map((type) => ({
   label: type.charAt(0).toUpperCase() + type.slice(1),
 }));
 
+interface TransactionFormProps {
+  categories: Category[];
+  onSubmit: (data: TransactionFormValues) => Promise<void>;
+}
 export default function TransactionForm({
   categories,
-}: {
-  categories: Category[];
-}) {
+  onSubmit,
+}: TransactionFormProps) {
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema),
     defaultValues: {
@@ -41,6 +44,7 @@ export default function TransactionForm({
       transactionType: "income",
     },
   });
+  const { isSubmitting } = form.formState;
 
   const transactionType = useWatch({
     control: form.control,
@@ -50,128 +54,128 @@ export default function TransactionForm({
     .filter((category) => category.type === transactionType)
     .map((category) => ({ value: category.id, label: category.name }));
 
-  const handleSubmit = async (data: TransactionFormValues) => {
-    // TODO: save the transaction
-    console.log(data);
-  };
-
   return (
-    <form onSubmit={form.handleSubmit(handleSubmit)}>
-      <FieldGroup className="grid grid-cols-2 gap-y-5 gap-x-4">
-        <FormField
-          control={form.control}
-          name="transactionType"
-          label="Transaction Type"
-        >
-          {(field, invalid) => (
-            <Select
-              name={field.name}
-              items={transactionTypes}
-              value={field.value}
-              onValueChange={(value) => {
-                field.onChange(value);
-                // The selected category may belong to the other type
-                form.setValue("categoryId", 0);
-              }}
-            >
-              <SelectTrigger
-                id={field.name}
-                className="w-full"
-                onBlur={field.onBlur}
-                aria-invalid={invalid}
+    <form onSubmit={form.handleSubmit(onSubmit)}>
+      {/* Disables every control inside while the submit is in flight */}
+      <fieldset disabled={isSubmitting}>
+        <FieldGroup className="grid grid-cols-2 gap-y-5 gap-x-4">
+          <FormField
+            control={form.control}
+            name="transactionType"
+            label="Transaction Type"
+          >
+            {(field, invalid) => (
+              <Select
+                name={field.name}
+                items={transactionTypes}
+                value={field.value}
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  // The selected category may belong to the other type
+                  form.setValue("categoryId", 0);
+                }}
               >
-                <SelectValue placeholder="Select a type" />
-              </SelectTrigger>
-              <SelectContent>
-                {transactionTypes.map((type) => (
-                  <SelectItem key={type.value} value={type.value}>
-                    {type.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        </FormField>
-        <FormField control={form.control} name="categoryId" label="Category">
-          {(field, invalid) => (
-            <Select
-              name={field.name}
-              items={categoryOptions}
-              value={field.value || null}
-              onValueChange={field.onChange}
-            >
-              <SelectTrigger
-                id={field.name}
-                className="w-full"
-                onBlur={field.onBlur}
-                aria-invalid={invalid}
+                <SelectTrigger
+                  id={field.name}
+                  className="w-full"
+                  onBlur={field.onBlur}
+                  aria-invalid={invalid}
+                >
+                  <SelectValue placeholder="Select a type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {transactionTypes.map((type) => (
+                    <SelectItem key={type.value} value={type.value}>
+                      {type.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </FormField>
+          <FormField control={form.control} name="categoryId" label="Category">
+            {(field, invalid) => (
+              <Select
+                name={field.name}
+                items={categoryOptions}
+                value={field.value || null}
+                onValueChange={field.onChange}
               >
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categoryOptions.map((category) => (
-                  <SelectItem key={category.value} value={category.value}>
-                    {category.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        </FormField>
-        <FormField
-          control={form.control}
-          name="transactionDate"
-          label="Transaction Date"
-        >
-          {(field, invalid) => (
-            <Input
-              {...field}
-              id={field.name}
-              type="date"
-              max={format(new Date(), "yyyy-MM-dd")}
-              value={
-                isValid(field.value) ? format(field.value, "yyyy-MM-dd") : ""
-              }
-              onChange={(e) =>
-                field.onChange(parse(e.target.value, "yyyy-MM-dd", new Date()))
-              }
-              aria-invalid={invalid}
-            />
-          )}
-        </FormField>
-        <FormField control={form.control} name="amount" label="Amount">
-          {(field, invalid) => (
-            <Input
-              {...field}
-              id={field.name}
-              type="number"
-              step="0.01"
-              min="0"
-              placeholder="0.00"
-              aria-invalid={invalid}
-            />
-          )}
-        </FormField>
-        <FormField
-          control={form.control}
-          name="description"
-          label="Description"
-          className="col-span-2"
-        >
-          {(field, invalid) => (
-            <Input
-              {...field}
-              id={field.name}
-              placeholder="e.g. Groceries"
-              autoComplete="off"
-              aria-invalid={invalid}
-            />
-          )}
-        </FormField>
-      </FieldGroup>
-      <Button type="submit" className="mt-5 w-full">
-        Submit
-      </Button>
+                <SelectTrigger
+                  id={field.name}
+                  className="w-full"
+                  onBlur={field.onBlur}
+                  aria-invalid={invalid}
+                >
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categoryOptions.map((category) => (
+                    <SelectItem key={category.value} value={category.value}>
+                      {category.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </FormField>
+          <FormField
+            control={form.control}
+            name="transactionDate"
+            label="Transaction Date"
+          >
+            {(field, invalid) => (
+              <Input
+                {...field}
+                id={field.name}
+                type="date"
+                max={format(new Date(), "yyyy-MM-dd")}
+                value={
+                  isValid(field.value) ? format(field.value, "yyyy-MM-dd") : ""
+                }
+                onChange={(e) =>
+                  field.onChange(
+                    parse(e.target.value, "yyyy-MM-dd", new Date()),
+                  )
+                }
+                aria-invalid={invalid}
+              />
+            )}
+          </FormField>
+          <FormField control={form.control} name="amount" label="Amount">
+            {(field, invalid) => (
+              <Input
+                {...field}
+                id={field.name}
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="0.00"
+                aria-invalid={invalid}
+              />
+            )}
+          </FormField>
+          <FormField
+            control={form.control}
+            name="description"
+            label="Description"
+            className="col-span-2"
+          >
+            {(field, invalid) => (
+              <Input
+                {...field}
+                id={field.name}
+                placeholder="e.g. Groceries"
+                autoComplete="off"
+                aria-invalid={invalid}
+              />
+            )}
+          </FormField>
+        </FieldGroup>
+        <Button type="submit" className="mt-5 w-full">
+          {isSubmitting ? "Submitting..." : "Submit"}
+        </Button>
+      </fieldset>
     </form>
   );
 }

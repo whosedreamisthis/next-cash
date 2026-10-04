@@ -1,4 +1,4 @@
-import { addDays } from "date-fns";
+import { addDays, subYears } from "date-fns";
 import { z } from "zod";
 
 export const TRANSACTION_TYPES = ["income", "expense"] as const;
@@ -9,6 +9,10 @@ export const transactionFormSchema = z.object({
   transactionDate: z.coerce
     .date()
     // Checked on every validation, not once at module load
+    .refine(
+      (date) => date >= subYears(new Date(), 100),
+      "Transaction date is too far in the past",
+    )
     .refine(
       (date) => date <= addDays(new Date(), 1),
       "Transaction date cannot be in the future",
@@ -21,3 +25,9 @@ export const transactionFormSchema = z.object({
 });
 
 export type TransactionFormValues = z.infer<typeof transactionFormSchema>;
+
+// The type is only used to filter categories in the form; the server
+// derives it from the category itself
+export const transactionSchema = transactionFormSchema.omit({
+  transactionType: true,
+});

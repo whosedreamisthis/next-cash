@@ -5,6 +5,7 @@ import { ChartColumnBigIcon } from "lucide-react";
 import Link from "next/link";
 import { ClerkProvider, Show, SignInButton, SignUpButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
+import { Toaster } from "@/components/ui/sonner";
 import UserDropdown from "@/components/UserDropdown";
 
 const poppins = Poppins({
@@ -49,6 +50,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </header>
           </nav>
           {children}
+          <Toaster theme="light" />
         </body>
       </html>
     </ClerkProvider>

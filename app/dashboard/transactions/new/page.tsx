@@ -1,5 +1,5 @@
 import NewTransactionBreadcrumbs from "@/components/NewTransactionBreadcrumbs";
-import NewTransactionCard from "@/components/NewTransactionCard";
+import NewTransactionForm from "@/components/NewTransactionForm";
 import { getCategories } from "@/data/getCategories";
 
 export default async function NewTransactionPage() {
@@ -8,7 +8,7 @@ export default async function NewTransactionPage() {
   return (
     <div className="py-10 px-10">
       <NewTransactionBreadcrumbs />
-      <NewTransactionCard categories={categories} />
+      <NewTransactionForm categories={categories} />
     </div>
   );
 }
