@@ -7,12 +7,15 @@ import type { TransactionFormValues } from "@/lib/schemas/transaction";
 import { createTransaction } from "@/app/dashboard/transactions/new/actions";
 import { format } from "date-fns";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function NewTransactionForm({
   categories,
 }: {
   categories: Category[];
 }) {
+  const router = useRouter();
+
   const handleSubmit = async (data: TransactionFormValues) => {
     const result = await createTransaction({
       amount: data.amount,
@@ -28,9 +31,13 @@ export default function NewTransactionForm({
       });
     } else {
       toast.success("SUCCESS", {
-        description: "New transaction created",
+        description: "Transaction created",
         richColors: true,
       });
+
+      router.push(
+        `/dashboard/transactions?month=${data.transactionDate.getMonth() + 1}&year=${data.transactionDate.getFullYear()}`,
+      );
     }
   };
   return (
