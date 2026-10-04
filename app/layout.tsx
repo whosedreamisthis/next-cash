@@ -3,15 +3,9 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { ChartColumnBigIcon } from "lucide-react";
 import Link from "next/link";
-import {
-  ClerkProvider,
-  Show,
-  SignInButton,
-  SignUpButton,
-  UserButton,
-} from "@clerk/nextjs";
+import { ClerkProvider, Show, SignInButton, SignUpButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
-import UserDropdown from "@/components/ui/UserDropdown";
+import UserDropdown from "@/components/UserDropdown";
 
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
