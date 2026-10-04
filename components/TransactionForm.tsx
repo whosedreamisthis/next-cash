@@ -61,7 +61,8 @@ export default function TransactionForm({
     <form onSubmit={form.handleSubmit(onSubmit)}>
       {/* Disables every control inside while the submit is in flight */}
       <fieldset disabled={isSubmitting}>
-        <FieldGroup className="grid grid-cols-2 gap-y-5 gap-x-4">
+        {/* One column on phones, two from the sm breakpoint up */}
+        <FieldGroup className="grid grid-cols-1 gap-y-5 gap-x-4 sm:grid-cols-2">
           <FormField
             control={form.control}
             name="transactionType"
@@ -162,7 +163,7 @@ export default function TransactionForm({
             control={form.control}
             name="description"
             label="Description"
-            className="col-span-2"
+            className="sm:col-span-2"
           >
             {(field, invalid) => (
               <Input

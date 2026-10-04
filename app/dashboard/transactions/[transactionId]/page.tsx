@@ -33,7 +33,7 @@ export default async function EditTransactionPage({
   const transactionDate = parseISO(transaction.transactionDate);
 
   return (
-    <div className="py-10 px-10">
+    <div className="px-4 py-6 sm:px-10 sm:py-10">
       <EditTransactionBreadcrumbs
         month={transactionDate.getMonth() + 1}
         year={transactionDate.getFullYear()}

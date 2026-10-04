@@ -6,7 +6,7 @@ export default async function NewTransactionPage() {
   const categories = await getCategories();
 
   return (
-    <div className="py-10 px-10">
+    <div className="px-4 py-6 sm:px-10 sm:py-10">
       <NewTransactionBreadcrumbs />
       <NewTransactionForm categories={categories} />
     </div>

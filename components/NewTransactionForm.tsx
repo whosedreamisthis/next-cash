@@ -41,7 +41,7 @@ export default function NewTransactionForm({
     }
   };
   return (
-    <Card className="mt-4 w-[80vw]">
+    <Card className="mt-4 w-full max-w-3xl">
       <CardHeader>
         <CardTitle>New Transaction</CardTitle>
       </CardHeader>

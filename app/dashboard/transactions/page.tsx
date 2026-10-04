@@ -7,13 +7,7 @@ import MonthYearFilter from "@/components/MonthYearFilter";
 import TransactionsBreadcrumbs from "@/components/TransactionsBreadcrumbs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -30,6 +24,20 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   // $2,500 rather than $2,500.00, but still $12.50
   trailingZeroDisplay: "stripIfInteger",
 });
+
+function TransactionTypeBadge({ type }: { type: "income" | "expense" }) {
+  return (
+    <Badge
+      className={
+        type === "income"
+          ? "bg-lime-500 capitalize"
+          : "bg-orange-500 capitalize"
+      }
+    >
+      {type}
+    </Badge>
+  );
+}
 
 // Falls back to the current month/year when the param is missing or invalid
 function parseParam(
@@ -65,16 +73,15 @@ export default async function TransactionsPage({
   const transactions = await getTransactionsByMonth({ userId, year, month });
 
   return (
-    <div className="py-10 px-10">
+    <div className="px-4 py-6 sm:px-10 sm:py-10">
       <TransactionsBreadcrumbs />
       <Card className="mt-4">
-        <CardHeader>
+        {/* Stacks the title above the filter on small screens */}
+        <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle>
             {format(new Date(year, month - 1, 1), "MMM yyyy")} Transactions
           </CardTitle>
-          <CardAction>
-            <MonthYearFilter month={month} year={year} />
-          </CardAction>
+          <MonthYearFilter month={month} year={year} />
         </CardHeader>
         <CardContent>
           <Button
@@ -93,8 +100,10 @@ export default async function TransactionsPage({
                 <TableRow>
                   <TableHead>Date</TableHead>
                   <TableHead>Description</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Category</TableHead>
+                  <TableHead className="hidden sm:table-cell">Type</TableHead>
+                  <TableHead className="hidden md:table-cell">
+                    Category
+                  </TableHead>
                   <TableHead>Amount</TableHead>
                   <TableHead />
                 </TableRow>
@@ -103,24 +112,41 @@ export default async function TransactionsPage({
                 {transactions.map((transaction) => (
                   <TableRow key={transaction.id}>
                     <TableCell>
-                      {format(
-                        parseISO(transaction.transactionDate),
-                        "do MMM yyyy",
-                      )}
+                      {/* Phones show only the day; the month is in the title */}
+                      <span className="sm:hidden">
+                        {format(parseISO(transaction.transactionDate), "do")}
+                      </span>
+                      <span className="hidden sm:inline">
+                        {format(
+                          parseISO(transaction.transactionDate),
+                          "do MMM yyyy",
+                        )}
+                      </span>
                     </TableCell>
-                    <TableCell>{transaction.description}</TableCell>
-                    <TableCell>
-                      <Badge
-                        className={
-                          transaction.transactionType === "income"
-                            ? "bg-lime-500 capitalize"
-                            : "bg-orange-500 capitalize"
-                        }
-                      >
-                        {transaction.transactionType}
-                      </Badge>
+                    {/* Wraps long descriptions instead of widening the table */}
+                    <TableCell className="whitespace-normal sm:min-w-32">
+                      {transaction.description}
+                      {/* Below md the hidden columns sit under the description:
+                          type on phones, category on phones and tablets */}
+                      <div className="mt-1 flex flex-wrap items-center gap-1.5 md:hidden">
+                        <span className="sm:hidden">
+                          <TransactionTypeBadge
+                            type={transaction.transactionType}
+                          />
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {transaction.category}
+                        </span>
+                      </div>
                     </TableCell>
-                    <TableCell>{transaction.category}</TableCell>
+                    <TableCell className="hidden sm:table-cell">
+                      <TransactionTypeBadge
+                        type={transaction.transactionType}
+                      />
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell">
+                      {transaction.category}
+                    </TableCell>
                     <TableCell>
                       {currencyFormatter.format(Number(transaction.amount))}
                     </TableCell>

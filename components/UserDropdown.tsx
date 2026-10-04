@@ -13,6 +13,10 @@ export default function UserDropdown() {
         elements: {
           userButtonOuterIdentifier: {
             color: "white",
+            // Only the avatar fits next to the logo on phones
+            "@media (max-width: 639px)": {
+              display: "none",
+            },
           },
         },
       }}

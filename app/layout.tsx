@@ -24,14 +24,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <ClerkProvider signInUrl="/sign-in" signUpUrl="/sign-up">
       <html lang="en" className={`${poppins.variable}  h-full antialiased`}>
         <body className="min-h-full flex flex-col">
-          <nav className="bg-primary p-4 text-white h-20 flex items-center justify-between">
+          <nav className="bg-primary px-4 text-white h-16 flex items-center justify-between gap-2 sm:h-20 sm:px-6">
             <Link
               href="/"
-              className="font-bold text-2xl flex gap-1 items-center"
+              className="font-bold text-xl flex gap-1 items-center sm:text-2xl"
             >
               <ChartColumnBigIcon className="text-lime-500" /> NextCash
             </Link>
-            <header className="flex justify-end items-center p-4 gap-4 h-16">
+            <header className="flex justify-end items-center gap-1 sm:gap-4">
               <Show when="signed-out">
                 <SignInButton>
                   <Button variant="link" className="text-white">
