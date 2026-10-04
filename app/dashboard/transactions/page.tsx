@@ -24,9 +24,9 @@ import {
 } from "@/components/ui/table";
 import { getTransactionsByMonth } from "@/data/getTransactionsByMonth";
 
-const currencyFormatter = new Intl.NumberFormat("en-GB", {
+const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
-  currency: "GBP",
+  currency: "USD",
 });
 
 // Falls back to the current month/year when the param is missing or invalid

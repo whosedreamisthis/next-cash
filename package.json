@@ -12,7 +12,8 @@
     "db:migrate:prod": "drizzle-kit migrate --config=drizzle.prod.config.ts",
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx db/seed.ts",
-    "db:seed:prod": "tsx db/seed.ts --prod"
+    "db:seed:prod": "tsx db/seed.ts --prod",
+    "db:seed:transactions": "tsx db/seed-transactions.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
