@@ -1,6 +1,13 @@
 "use client";
 
-import { Card, CardTitle, CardHeader, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardAction,
+  CardTitle,
+  CardHeader,
+  CardContent,
+} from "@/components/ui/card";
+import DeleteTransactionButton from "@/components/DeleteTransactionButton";
 import TransactionForm from "@/components/TransactionForm";
 import type { Category } from "@/types/Category";
 import type { TransactionFormValues } from "@/lib/schemas/transaction";
@@ -49,6 +56,12 @@ export default function EditTransactionForm({
     <Card className="mt-4 w-[80vw]">
       <CardHeader>
         <CardTitle>Edit Transaction</CardTitle>
+        <CardAction>
+          <DeleteTransactionButton
+            transactionId={transactionId}
+            transactionDate={defaultValues.transactionDate}
+          />
+        </CardAction>
       </CardHeader>
       <CardContent>
         <TransactionForm

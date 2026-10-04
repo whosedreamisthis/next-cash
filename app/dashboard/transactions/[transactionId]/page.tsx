@@ -30,16 +30,21 @@ export default async function EditTransactionPage({
     notFound();
   }
 
+  const transactionDate = parseISO(transaction.transactionDate);
+
   return (
     <div className="py-10 px-10">
-      <EditTransactionBreadcrumbs />
+      <EditTransactionBreadcrumbs
+        month={transactionDate.getMonth() + 1}
+        year={transactionDate.getFullYear()}
+      />
       <EditTransactionForm
         categories={categories}
         transactionId={transaction.id}
         defaultValues={{
           transactionType: transaction.transactionType,
           categoryId: transaction.categoryId,
-          transactionDate: parseISO(transaction.transactionDate),
+          transactionDate,
           amount: Number(transaction.amount),
           description: transaction.description,
         }}

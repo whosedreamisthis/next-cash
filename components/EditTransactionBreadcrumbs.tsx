@@ -8,7 +8,14 @@ import {
 } from "@/components/ui/breadcrumb";
 import Link from "next/link";
 
-export default function EditTransactionBreadcrumbs() {
+export default function EditTransactionBreadcrumbs({
+  month,
+  year,
+}: {
+  // The transaction's month (1-12) and year, so "Transactions" returns to it
+  month: number;
+  year: number;
+}) {
   return (
     <Breadcrumb>
       <BreadcrumbList>
@@ -19,7 +26,13 @@ export default function EditTransactionBreadcrumbs() {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbLink render={<Link href="/dashboard/transactions" />}>
+          <BreadcrumbLink
+            render={
+              <Link
+                href={`/dashboard/transactions?month=${month}&year=${year}`}
+              />
+            }
+          >
             Transactions
           </BreadcrumbLink>
         </BreadcrumbItem>

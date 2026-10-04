@@ -70,3 +70,40 @@ export const updateTransaction = async (data: {
     id: transaction.id,
   };
 };
+
+export const deleteTransaction = async (id: number) => {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return {
+      error: true,
+      message: "Unauthorized",
+    };
+  }
+
+  if (!Number.isInteger(id) || id < 1 || id > 2_147_483_647) {
+    return {
+      error: true,
+      message: "Transaction not found",
+    };
+  }
+
+  // Matching on userId too means users can only delete their own transactions
+  const [transaction] = await db
+    .delete(transactionsTable)
+    .where(
+      and(eq(transactionsTable.id, id), eq(transactionsTable.userId, userId)),
+    )
+    .returning({ id: transactionsTable.id });
+
+  if (!transaction) {
+    return {
+      error: true,
+      message: "Transaction not found",
+    };
+  }
+
+  return {
+    id: transaction.id,
+  };
+};
