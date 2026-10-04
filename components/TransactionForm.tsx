@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { format, isValid, parse } from "date-fns";
 import FormField from "@/components/FormField";
 import { Button } from "@/components/ui/button";
@@ -19,21 +19,18 @@ import {
   transactionFormSchema,
   type TransactionFormValues,
 } from "@/lib/schemas/transaction";
+import type { Category } from "@/types/Category";
 
 const transactionTypes = TRANSACTION_TYPES.map((type) => ({
   value: type,
   label: type.charAt(0).toUpperCase() + type.slice(1),
 }));
 
-// TODO: replace with the real categories
-const categories = [
-  { value: 1, label: "Category 1" },
-  { value: 2, label: "Category 2" },
-  { value: 3, label: "Category 3" },
-  { value: 4, label: "Category 4" },
-];
-
-export default function TransactionForm() {
+export default function TransactionForm({
+  categories,
+}: {
+  categories: Category[];
+}) {
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema),
     defaultValues: {
@@ -44,6 +41,14 @@ export default function TransactionForm() {
       transactionType: "income",
     },
   });
+
+  const transactionType = useWatch({
+    control: form.control,
+    name: "transactionType",
+  });
+  const categoryOptions = categories
+    .filter((category) => category.type === transactionType)
+    .map((category) => ({ value: category.id, label: category.name }));
 
   const handleSubmit = async (data: TransactionFormValues) => {
     // TODO: save the transaction
@@ -63,7 +68,11 @@ export default function TransactionForm() {
               name={field.name}
               items={transactionTypes}
               value={field.value}
-              onValueChange={field.onChange}
+              onValueChange={(value) => {
+                field.onChange(value);
+                // The selected category may belong to the other type
+                form.setValue("categoryId", 0);
+              }}
             >
               <SelectTrigger
                 id={field.name}
@@ -87,7 +96,7 @@ export default function TransactionForm() {
           {(field, invalid) => (
             <Select
               name={field.name}
-              items={categories}
+              items={categoryOptions}
               value={field.value || null}
               onValueChange={field.onChange}
             >
@@ -100,7 +109,7 @@ export default function TransactionForm() {
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
               <SelectContent>
-                {categories.map((category) => (
+                {categoryOptions.map((category) => (
                   <SelectItem key={category.value} value={category.value}>
                     {category.label}
                   </SelectItem>
