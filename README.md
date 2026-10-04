@@ -4,6 +4,10 @@ Track your income and expenses and see your monthly cashflow at a glance.
 
 **Live demo:** https://next-cash-six.vercel.app
 
+Built while following the
+[Next.js & PostgreSQL course on Udemy](https://www.udemy.com/course/nextjs-postgresql/)
+by Tom Phillips.
+
 ## Features
 
 - Sign in and sign up with Clerk
